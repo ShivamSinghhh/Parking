@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking</title>
+    <style>
+        .parking {
+            display: flex;
+            width: 80%;
+            height: 100px;
+            /* border: 2px solid salmon; */
+            justify-content: space-around;
+        }
+
+        .parking>div {
+            text-align: center;
+            width: 25%;
+            border: 2px solid teal;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h2>Parking Availability</h2>
+    <form action="">
+        <input id="user" type="text" placeholder="user">
+        <select name="" id="type">
+            <option value="">Select</option>
+            <option value="car">Car</option>
+            <option value="bike">Bike</option>
+            <option value="tempo">Tempo</option>
+        </select>
+        <input id="numPlate" type="text" placeholder="vehicle number">
+        <button id="entry" onclick="bookParking(event)">Enter</button>
+    </form>
+    <br>
+
+    <form action="">
+        <input id="token" type="text" placeholder="Token">
+        <select id="typeExit" name="" id="">
+            <option value="">Select</option>
+            <option value="car">Car</option>
+            <option value="bike">Bike</option>
+            <option value="tempo">Tempo</option>
+        </select>
+        <!-- <input type="text" placeholder="vehicle number">        -->
+        <button id="exit" onclick="exitParking(event)">Exit</button>
+    </form>
+    <br>
+    <div class="parking">
+        <div>
+            <h3>Car <span>Rate: ₹40/2hr </span></h3>
+            <span>Availability &nbsp; = &nbsp; </span>
+            <span id="carNum"></span>
+        </div>
+        <div>
+            <h3>Bike <span>Rate: ₹10/2hr </span></h3>
+            <span>Availability &nbsp; = &nbsp; </span>
+            <span id="bikeNum"></span>
+        </div>
+        <div>
+            <h3>Tempo <span>Rate: ₹30 / 2hr </span></h3>
+            <span>Availability &nbsp; = &nbsp; </span>
+            <span id="tempoNum"></span>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    // import  {parking,carSlot,bikeSlot,tempoSlot}  from  "./index.js"
+    let parking = JSON.parse(localStorage.getItem("parking"));
+
+    let span1 = document.getElementById("carNum")
+    span1.innerText = parking.car.avail;
+
+    let span2 = document.getElementById("bikeNum")
+    span2.innerText = parking.bike.avail;
+
+    let span3 = document.getElementById("tempoNum")
+    span3.innerText = parking.tempo.avail;
+
+
+
+
+    //---------entry-----------------//
+    // let inputEnt = document.getElementById("entry");
+    // inputEnt.addEventListener("click",bookParking);
+
+    function bookParking(e) {
+        e.preventDefault();
+        let user = document.getElementById("user").value;
+        let type = document.getElementById("type").value;
+        let numPlate = document.getElementById("numPlate").value;
+
+        console.log(user, type, numPlate)
+
+        if (type === "car") {
+            function bookCarParking() {
+                if (parking.car.avail == 0) {
+                    window.alert("No Availability");
+                    return;
+                } else {
+                    let carSlot = JSON.parse(localStorage.getItem("carSlot"));
+                    for (let i = 0; i < carSlot.length; i++) {
+                        if (carSlot[i].avail === false) { continue }
+                        else {
+                            carSlot[i].avail = false;
+                            carSlot[i].userId = i;
+                            carSlot[i].entry = new Date().getMinutes();
+                            parking.car.avail = parking.car.avail - 1;
+                            localStorage.setItem("carSlot", JSON.stringify(carSlot));
+                            localStorage.setItem("parking", JSON.stringify(parking));
+                            window.alert(`userToken = ${i}`)
+                            span1.innerText = parking.car.avail;
+                            break;
+
+                        }
+                    }
+                }
+
+            }
+            bookCarParking()
+        }
+
+        user.innerText = "";
+        type.innerText = "";
+        numPlate = "";
+    }
+
+    //-----------exit-------parking---------//
+
+    function exitParking(e) {
+        e.preventDefault();
+        let token = document.getElementById("token").value;
+        let typeExit = document.getElementById("typeExit").value;
+
+        console.log(token, typeExit)
+
+        if (typeExit === "car") {
+            function exitCarParking() {
+                console.log("working")
+                // let flag = true;                   
+                let carSlot = JSON.parse(localStorage.getItem("carSlot"));
+                for (let i = 0; i < carSlot.length; i++) {
+                    if (i > token) { break }
+                    else if (token != i) { continue }
+                    else {
+                        if (carSlot[i].avail == true) { return (window.alert(`There is no Vehicle parked with this TokenID`)) }
+                        else {
+                            let rate = 5;
+                            let exitTime = new Date().getMinutes();
+                            let diff = exitTime - carSlot[i].entry;
+                            console.log("diff =", diff)
+                            let cost = rate * diff;
+
+                            carSlot[i].avail = true;
+                            carSlot[i].userId = null;
+                            carSlot[i].entry = null;
+                            parking.car.avail = parking.car.avail + 1;
+                            localStorage.setItem("carSlot", JSON.stringify(carSlot));
+                            localStorage.setItem("parking", JSON.stringify(parking));
+                            window.alert(`Please pay ₹ ${cost}`)
+                            span1.innerText = parking.car.avail;
+                            // flag = false;
+                            return;
+                        }
+
+                    }
+                }
+                return (window.alert(`There is no Vehicle parked with this TokenID`))
+
+            }
+            exitCarParking()
+        }
+
+        token.innerText = "";
+        typeExit.innerText = "";
+
+    }
+
+
+
+</script>

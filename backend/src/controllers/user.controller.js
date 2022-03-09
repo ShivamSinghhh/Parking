@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 
-const Car = require("../models/car.model")
-const Parking = require("../models/parkingZone.model");
 
+const User = require("../models/user.model")
 
 router.post("/", async (req,res) => {
     try {
-        const car = await Car.create(req.body);
-        res.status(201).send({car});
+
+        const user = await User.create(req.body);
+        res.status(201).send({user});
 
     } catch (e) {
         res.status(500).json({status : "Failed", message : e.message});
@@ -18,15 +18,13 @@ router.post("/", async (req,res) => {
 
 router.get("/", async (req,res) => {
     try {
-        const car = await Car.find().lean().exec();
-        res.status(201).send({car});
+
+        const user = await User.find().lean().exec();
+        res.status(201).send({user});
 
     } catch (e) {
         res.status(500).json({status : "Failed", message : e.message});
     }
 })
-
-
-
 
 module.exports = router;

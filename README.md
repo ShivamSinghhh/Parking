@@ -16,7 +16,7 @@ Availability for parking is dynamic and it will always visible to user.
 <br/>
 
 if the availability is there , user will recieve a token for credential.
-This token will be required to take your vehicle from parking.
+This token will be required to take out vehicle from parking.
 
 //-------for Exit----------//
 <br/>
@@ -24,4 +24,4 @@ This token will be required to take your vehicle from parking.
  5. you have to enter token and select type of vehicle.
  6. if the token doesn't match with the parked vehicle, it will give an alert
  7. if token matches with the parked vehicle,
- 8. it will alert to pay parking fee according to the number of hours.
+ 8. it will alert to pay parking fee according to the duration of parking.
